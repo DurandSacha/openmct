@@ -109,6 +109,8 @@ const SIMPLE_CONTENT_TYPES = [
     'conditionWidget'
 ];
 
+const WIDTH_CLASS_ROOT = '--width-less-than-';
+
 export default {
     components: {
         ObjectView,
@@ -216,9 +218,16 @@ export default {
             this.status = status;
         },
         resizeSoView() {
-            console.log('resizeSoView', this.$refs.soView.offsetWidth);
+            let cW = this.$refs.soView.offsetWidth;
+            let wClass = '';
 
-            // TODO: change widthClass value based on this.$refs.soView width
+            if (cW < 220) {
+                wClass = WIDTH_CLASS_ROOT + '220';
+            } else if (cW < 600) {
+                wClass = WIDTH_CLASS_ROOT + '600';
+            }
+
+            this.widthClass = wClass;
         }
     }
 };
