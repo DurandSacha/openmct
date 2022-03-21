@@ -21,9 +21,11 @@
  *****************************************************************************/
 <template>
 <div
+    ref="soView"
     class="c-so-view js-notebook-snapshot-item-wrapper"
     :class="[
         statusClass,
+        widthClass,
         'c-so-view--' + domainObject.type,
         {
             'c-so-view--no-frame': !hasFrame,
@@ -145,6 +147,7 @@ export default {
 
         return {
             cssClass,
+            widthClass: '',
             complexContent,
             notebookEnabled: this.openmct.types.get('notebook'),
             statusBarItems: [],
@@ -163,12 +166,21 @@ export default {
         if (provider) {
             this.$refs.objectView.show(this.domainObject, provider.key, false, this.objectPath);
         }
+
+        if (this.$refs.soView) {
+            this.soViewResizeObserver = new ResizeObserver(this.resizeSoView);
+            this.soViewResizeObserver.observe(this.$refs.soView);
+        }
     },
     beforeDestroy() {
         this.removeStatusListener();
 
         if (this.actionCollection) {
             this.unlistenToActionCollection();
+        }
+
+        if (this.soViewResizeObserver) {
+            this.soViewResizeObserver.disconnect();
         }
     },
     methods: {
@@ -202,6 +214,11 @@ export default {
         },
         setStatus(status) {
             this.status = status;
+        },
+        resizeSoView() {
+            console.log('resizeSoView', this.$refs.soView.offsetWidth);
+
+            // TODO: change widthClass value based on this.$refs.soView width
         }
     }
 };
